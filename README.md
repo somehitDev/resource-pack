@@ -9,22 +9,22 @@
 <div align="center">
     <img src="https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue" />
     <br>
-    <a href="https://github.com/somehitDev/resource.pack/blob/main/LICENSE">
-        <img src="https://img.shields.io/github/license/somehitDev/resource.pack.svg" alt="GPL-3.0 License" />
+    <a href="https://github.com/somehitDev/resource-pack/blob/main/LICENSE">
+        <img src="https://img.shields.io/github/license/somehitDev/resource-pack.svg" alt="GPL-3.0 License" />
     </a>
-    <a href="https://pypi.org/project/resource.pack/">
-        <img src="https://img.shields.io/pypi/v/resource.pack.svg" alt="pypi" />
+    <a href="https://pypi.org/project/resource-pack/">
+        <img src="https://img.shields.io/pypi/v/resource-pack.svg" alt="pypi" />
     </a>
 </div><br><br>
 
 ## 🛠️ Installation
 - install from git(latest)
 ```bash
-pip install git@github.com:somehitDev/resource.pack.git
+pip install git@github.com:somehitDev/resource-pack.git
 ```
 - pypi
 ```bash
-pip install resource.pack
+pip install resource-pack
 ```
 
 <br>

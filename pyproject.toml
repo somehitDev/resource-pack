@@ -28,4 +28,4 @@ requires-python = ">=3.7"
 name = "resource_pack"
 
 [project.urls]
-Repository = "https://github.com/somehitDev/resource.pack"
+Repository = "https://github.com/somehitDev/resource-pack"
