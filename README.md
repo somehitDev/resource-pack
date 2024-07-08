@@ -24,7 +24,7 @@ pip install git@github.com:somehitDev/resource-pack.git
 ```
 - pypi
 ```bash
-pip install resource-pack
+pip install py-resource-pack
 ```
 
 <br>
