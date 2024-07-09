@@ -1,5 +1,5 @@
 <h1 align="center">
-    resource.pack
+    resource-pack
 </h1>
 <p align="center">
     Resource packaging manager for python(written in pure python)

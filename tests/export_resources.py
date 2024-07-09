@@ -3,4 +3,4 @@ from resource_pack import load
 
 
 manager = load("test.res")
-manager.export("test_res.py")
+manager.export("test_res.py", as_pyc = True)

@@ -3,11 +3,11 @@
 Resource packaging manager for python(written in pure python)
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
-from .functions import load
 from .resource_manager import ResourceManager
+load = ResourceManager.load
 
 __all__ = [
     "load",
