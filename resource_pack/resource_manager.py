@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
-import os, pathlib, pprint, codecs, pickle, py_compile
-from typing import Any, Union
+import os, pathlib, pprint, codecs, pickle, py_compile, shutil
+from typing import Dict, Any, Tuple, Union
+
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
+
 
 
 class ResourceManager:
@@ -8,15 +14,34 @@ class ResourceManager:
     ResourceManager class
     """
     def __init__(self):
-        self.__map = {}
+        self.__map:Dict[str, Dict[Literal["type", "value"], Any]] = {}
 
     def __str__(self) -> str:
+        dict_to_show = {
+            key: value
+            for key, value in self.items()
+        }
         return f"""ResourceManager at {hex(id(self))}
-{pprint.pformat(self.__map, 4)}
+{pprint.pformat(dict_to_show, 4)}
 """
 
     def __getitem__(self, name:str) -> Any:
-        return self.__map[name]
+        return self.__map[name]["value"]
+    
+    def keys(self) -> Tuple[str]:
+        return tuple(self.__map.keys())
+    
+    def values(self) -> Tuple[Any]:
+        return (
+            value["value"]
+            for value in self.__map.values()
+        )
+    
+    def items(self) -> Tuple[Tuple[str, Any]]:
+        return (
+            ( key, value["value"] )
+            for key, value in self.__map.items()
+        )
     
     @staticmethod
     def load(resource_file:Union[str, pathlib.Path, os.PathLike]) -> "ResourceManager":
@@ -60,10 +85,16 @@ class ResourceManager:
 
         try:
             with open(str(file_path), "r", encoding = "utf-8") as rfr:
-                self.__map[name] = rfr.read()
+                self.__map[name] = {
+                    "type": "file",
+                    "value": rfr.read()
+                }
         except UnicodeDecodeError:
             with open(str(file_path), "rb") as rfr:
-                self.__map[name] = rfr.read()
+                self.__map[name] = {
+                    "type": "file",
+                    "value": rfr.read()
+                }
 
         return self
 
@@ -80,7 +111,10 @@ class ResourceManager:
         ------
         ResourceManager
         """
-        self.__map[name] = value
+        self.__map[name] = {
+            "type": "value",
+            "value": value
+        }
 
         return self
 
@@ -129,27 +163,34 @@ class ResourceManager:
         with open(resource_file, "wb") as dfw:
             pickle.dump(self, dfw)
 
-    def export(self, python_file:Union[str, pathlib.Path, os.PathLike], as_pyc:bool = False, remove_origin:bool = False):
+    def export(self, python_file:Union[str, pathlib.Path, os.PathLike], as_pyc:bool = False, remove_origin:bool = False, module_safe:bool = True):
         """
         export resources into python file
-
-        can be loaded where `py-resource-pack` is not installed
 
         Parameters
         ----------
         - python_file: python file to export(Union[str, pathlib.Path, os.PathLike])
         - as_pyc: compile to pyc or not(type: bool, default: False)
         - remove_origin: remove origin python file or not only when `as_pyc` is True(type: bool, default: False)
+        - module_safe: if True, can be loaded where `py-resource-pack` is not installed(type: bool, default: True)
         """
         if not isinstance(python_file, pathlib.Path):
             python_file = pathlib.Path(python_file).resolve()
 
         with open(str(python_file), "w", encoding = "utf-8") as etp:
-            etp.write(f"""# -*- coding: utf-8 -*-
+            if module_safe:
+                etp.write(f"""# -*- coding: utf-8 -*-
 import pickle, codecs
 from typing import Dict, Union, Any
 
 resources:Dict[str, Union[str, bytes, Any]] = pickle.loads(codecs.decode('''{codecs.encode(pickle.dumps(self.__map), "base64").decode()}'''.encode(), "base64"))
+""")
+            else:
+                etp.write(f"""# -*- coding: utf-8 -*-
+import pickle, codecs
+from resource_pack import ResourceManager
+
+resources:ResourceManager = pickle.loads(codecs.decode('''{codecs.encode(pickle.dumps(self), "base64").decode()}'''.encode(), "base64"))
 """)
 
         if as_pyc:
@@ -157,3 +198,33 @@ resources:Dict[str, Union[str, bytes, Any]] = pickle.loads(codecs.decode('''{cod
 
             if remove_origin:
                 os.remove(str(python_file))
+
+    def extract(self, dest:Union[str, pathlib.Path, os.PathLike], force:bool = True):
+        """
+        extract file type resources to destination
+
+        Parameters
+        ----------
+        - dest: destination path(Union[str, pathlib.Path, os.PathLike])
+        - force: replace existing destination or not(type: bool, default: True)
+        """
+        if not isinstance(dest, pathlib.Path):
+            dest = pathlib.Path(dest).resolve()
+
+        if dest.exists() and force:
+            shutil.rmtree(str(dest))
+
+        for key, value in self.__map.items():
+            # extract only file type values
+            if value["type"] == "file":
+                dest_file = dest.joinpath(*key.split("/"))
+                os.makedirs(str(dest_file.parent), exist_ok = True)
+
+                if isinstance(value["value"], bytes):
+                    # write as binary mode
+                    with open(dest_file, "wb") as wbf:
+                        wbf.write(value["value"])
+                elif isinstance(value["value"], str):
+                    # write as text mode
+                    with open(dest_file, "w", encoding = "utf-8") as wtf:
+                        wtf.write(value["value"])

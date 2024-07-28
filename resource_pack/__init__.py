@@ -3,7 +3,7 @@
 Resource packaging manager for python(written in pure python)
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 
 from .resource_manager import ResourceManager

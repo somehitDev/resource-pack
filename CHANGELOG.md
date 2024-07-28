@@ -10,3 +10,7 @@
 - add parameters to `export` function.
   - create_pyc
 - add help text and type linting.
+
+## 0.3.0(2024/07/28)
+- change value of ResourceManager from `{value}` to `{ "type": {type}, "value": {value} }`.
+- add `extract` function.

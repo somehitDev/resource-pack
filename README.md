@@ -12,8 +12,8 @@
     <a href="https://github.com/somehitDev/resource-pack/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/somehitDev/resource-pack.svg" alt="GPL-3.0 License" />
     </a>
-    <a href="https://pypi.org/project/resource-pack/">
-        <img src="https://img.shields.io/pypi/v/resource-pack.svg" alt="pypi" />
+    <a href="https://pypi.org/project/py-resource-pack/">
+        <img src="https://img.shields.io/pypi/v/py-resource-pack.svg" alt="pypi" />
     </a>
 </div><br><br>
 
@@ -50,4 +50,7 @@ ResourceManager.load("{resource_file}")
 
 ## export as python file
 manager.export("{python_file}")
+
+## extract to destination
+manager.extract("{dest}")
 ```
